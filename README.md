@@ -620,3 +620,257 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Defender - Authentication</title>
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-green: #00ff41;
+            --bg-color: #050510;
+            --ui-bg: rgba(20, 20, 40, 0.9);
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: #fff;
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .auth-container {
+            background: var(--ui-bg);
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue);
+            padding: 40px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 30px 0;
+            font-size: 2rem;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--neon-green);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--neon-blue);
+            background: rgba(0, 243, 255, 0.1);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: var(--font-main);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--neon-blue);
+            background: rgba(0, 243, 255, 0.2);
+        }
+
+        .btn {
+            background: transparent;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px var(--neon-green);
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 25px var(--neon-green);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--neon-pink);
+            border: 2px solid var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--neon-pink);
+            color: #000;
+            box-shadow: 0 0 25px var(--neon-pink);
+        }
+
+        .toggle-form {
+            margin-top: 20px;
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        .toggle-form a {
+            color: var(--neon-pink);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: #ff4444;
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .success {
+            color: var(--neon-green);
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid var(--neon-green);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @media (max-width: 600px) {
+            .auth-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars-bg"></canvas>
+
+    <div class="auth-container">
+        <!-- Sign In Form -->
+        <div id="signin-form">
+            <h1>Neon Defender</h1>
+            <div class="error" id="signin-error"></div>
+            <div class="success" id="signin-success"></div>
+
+            <form onsubmit="handleSignIn(event)">
+                <div class="form-group">
+                    <label for="signin-username">Username</label>
+                    <input type="text" id="signin-username" required placeholder="Enter username">
+                </div>
+
+                <div class="form-group">
+                    <label for="signin-password">Password</label>
+                    <input type="password" id="signin-password" required placeholder="Enter password">
+                </div>
+
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+
+            <div class="toggle-form">
+                Don't have an account? <a onclick="toggleForms()">Sign Up</a>
+            </div>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="signup-form" class="hidden">
+            <h1>Create Account</h1>
+            <div class="error" id="signup-error"></div>
+            <div class="success" id="signup-success"></div>
+
+            <form onsubmit="handleSignUp(event)">
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" required placeholder="Choose username (3+ chars)">
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" required placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required placeholder="Choose password (6+ chars)">
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" required placeholder="Confirm password">
+                </div>
+
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+
+            <div class="toggle-form">
+                Already have an account? <a onclick="toggleForms()">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>
